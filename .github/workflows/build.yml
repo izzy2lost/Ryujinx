@@ -19,6 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # Install .NET SDK 9.0.100-preview.6.24328.19
+      - name: Install .NET SDK 9.0.100-preview.6.24328.19
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.100-preview.6.24328.19'
+
       # Set Current Date As Env Variable
       - name: Set current date as env variable
         run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
