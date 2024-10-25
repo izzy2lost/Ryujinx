@@ -27,7 +27,7 @@ jobs:
           
       - name: Grant execute permissions to gradlew
         run: |
-          icacls src\RyujinxAndroid\gradlew /grant Everyone:(RX)  # Grant read and execute permissions
+          icacls src\RyujinxAndroid\gradlew /grant "Everyone:(RX)"  # Grant read and execute permissions
 
       - name: Build APK
         run: |
