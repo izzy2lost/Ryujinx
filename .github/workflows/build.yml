@@ -22,6 +22,10 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
+      - name: Fix gradlew permissions
+        run: |
+          chmod +x ./src/RyujinxAndroid/gradlew
+
       - name: Build APK for Android
         run: |
           cd ./src/RyujinxAndroid
