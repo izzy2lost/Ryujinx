@@ -19,6 +19,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install Required Libraries
+        run: |
+         sudo apt-get update
+         sudo apt-get install -y \
+         libc6-dev \
+         zlib1g-dev \
+         liblog4cxx-dev \
+         libdl-dev \
+         libgcc-9-dev
+
       # Install .NET SDK 9.0.100-preview.6.24328.19
       - name: Install .NET SDK 9.0.100-preview.6.24328.19
         uses: actions/setup-dotnet@v3
