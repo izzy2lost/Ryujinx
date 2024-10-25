@@ -7,5 +7,8 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
         
+      - name: Make gradlew executable
+        run: chmod +x ./src/RyujinxAndroid/gradlew
+
       - name: Build the app
         run: ./src/RyujinxAndroid/gradlew build
