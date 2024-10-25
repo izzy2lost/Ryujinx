@@ -26,7 +26,6 @@ jobs:
          libc6-dev \
          zlib1g-dev \
          liblog4cxx-dev \
-         libdl-dev \
          libgcc-9-dev
 
       # Install .NET SDK 9.0.100-preview.6.24328.19
