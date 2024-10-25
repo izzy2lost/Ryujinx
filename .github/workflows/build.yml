@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Change to Windows runner
 
     steps:
       - name: Checkout code
@@ -19,30 +19,23 @@ jobs:
 
       - name: Install Android SDK
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          mkdir -p $HOME/Android/Sdk/cmdline-tools
-          unzip commandlinetools-linux-9477386_latest.zip -d $HOME/Android/Sdk/cmdline-tools
-          mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
-          yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/Android/Sdk --licenses
-          $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/Android/Sdk "platform-tools" "platforms;android-30" "build-tools;30.0.3"  # Adjust for your target SDK
-
-      - name: Set environment variables
-        run: |
-          echo "ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV  # Set ANDROID_HOME
-          echo "PATH=$PATH:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV  # Add platform-tools to PATH
-
+          choco install -y android-sdk
+          echo "ANDROID_HOME=C:\ProgramData\chocolatey\lib\android-sdk\tools" >> $GITHUB_ENV
+          echo "ANDROID_HOME=C:\ProgramData\chocolatey\lib\android-sdk" >> $GITHUB_ENV
+          echo "PATH=$PATH:C:\ProgramData\chocolatey\lib\android-sdk\platform-tools" >> $GITHUB_ENV
+          echo "PATH=$PATH:C:\ProgramData\chocolatey\lib\android-sdk\tools" >> $GITHUB_ENV
+          
       - name: Grant execute permissions to gradlew
-        run: chmod +x src/RyujinxAndroid/gradlew  # Make the gradlew script executable
+        run: |
+          icacls src\RyujinxAndroid\gradlew /grant Everyone:(RX)  # Grant read and execute permissions
 
       - name: Build APK
         run: |
           cd src/RyujinxAndroid  # Navigate to the Android project directory
-          ./gradlew assembleDebug  # Build the APK
+          .\gradlew assembleDebug  # Build the APK
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: src/RyujinxAndroid/app/build/outputs/apk/debug/*.apk  # Adjust if necessary
+          path: src/RyujinxAndroid\app\build\outputs\apk\debug\*.apk  # Adjust if necessary
