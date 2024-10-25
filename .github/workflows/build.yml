@@ -22,6 +22,11 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
+      - name: Install .NET SDK 9.0.100-preview.6.24328.19
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.100-preview.6.24328.19
+
       - name: Fix gradlew permissions
         run: |
           chmod +x ./src/RyujinxAndroid/gradlew
