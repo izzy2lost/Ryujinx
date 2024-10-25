@@ -1,84 +1,37 @@
-name: Generated APK (Upload - Create Artifact To Github Action)
-
-env:
-  # The name of the main module repository
-  main_project_module: app
+name: Android build
 
 on:
-  push:
-    branches:
-      - 'release/**'
-
-  # Allows you to run this workflow manually from the Actions tab
+  workflow_call:
   workflow_dispatch:
+  push:
+    branches: ["android"]
+  pull_request:
+    branches: ["android"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Install necessary libraries
-        run: |
-         sudo apt-get update
-         sudo apt-get install -y \
-         build-essential \
-         gcc \
-         g++ \
-         gcc-arm-linux-gnueabihf \
-         libc6-dev-armhf-cross \
-         libgcc-9-dev-armhf-cross \
-         zlib1g-dev \
-         libc-dev \
-         liblog4cplus-dev
-         
-      # Install .NET SDK 9.0.100-preview.6.24328.19
-      - name: Install .NET SDK 9.0.100-preview.6.24328.19
-        uses: actions/setup-dotnet@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
         with:
-          dotnet-version: '9.0.100-preview.6.24328.19'
+          submodules: "recursive"
+          fetch-depth: 0
 
-      # Set Current Date As Env Variable
-      - name: Set current date as env variable
-        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-
-      # Set Repository Name As Env Variable
-      - name: Set repository name as env variable
-        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
-
-      - name: Set Up JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu' # See 'Supported distributions' for available options
-          java-version: '17'
-          cache: 'gradle'
+          java-version: "17"
+          distribution: "temurin"
 
-      - name: Change wrapper permissions
-        run: chmod +x ./src/RyujinxAndroid/gradlew
-      
-      # Run Build Project
-      - name: Build gradle project
-        run: ./src/RyujinxAndroid/gradlew build -p src/RyujinxAndroid
+      - name: Build APK for Android
+        run: |
+          cd ./src/RyujinxAndroid
+          ./gradlew assembleRelease
 
-      # Create APK Debug
-      - name: Build APK debug project - ${{ env.main_project_module }} module
-        run: ./src/RyujinxAndroid/gradlew assembleDebug -p src/RyujinxAndroid
-
-      # Create APK Release
-      - name: Build APK release project - ${{ env.main_project_module }} module
-        run: ./src/RyujinxAndroid/gradlew assembleRelease -p src/RyujinxAndroid
-
-      # Upload Artifact Build (APK Debug)
-      - name: Upload APK Debug - ${{ env.repository_name }}
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.date_today }} - ${{ env.repository_name }} - APK debug generated
-          path: src/RyujinxAndroid/${{ env.main_project_module }}/build/outputs/apk/debug/
-
-      # Upload Artifact Build (APK Release)
-      - name: Upload APK Release - ${{ env.repository_name }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.date_today }} - ${{ env.repository_name }} - APK release generated
-          path: src/RyujinxAndroid/${{ env.main_project_module }}/build/outputs/apk/release/
+          name: ryujinx-android
+          path: ./src/RyujinxAndroid/app/build/outputs/apk/release/*.apk
