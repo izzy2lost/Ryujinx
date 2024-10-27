@@ -46,6 +46,9 @@ jobs:
           sudo apt-get install -y ninja-build
           ln -s /usr/bin/ninja .
 
+      - name: Set Gradlew Permissions
+        run: chmod +x ./src/RyujinxAndroid/gradlew
+
       - name: Android Assemble
         env:
           CMAKE_C_COMPILER_LAUNCHER: "ccache"
