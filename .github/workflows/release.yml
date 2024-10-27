@@ -14,9 +14,7 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
+        
       - name: Install Dependencies
         run: |
           sudo apt-get update
